@@ -100,3 +100,13 @@ class MySQLTable:
             query = f"DELETE FROM {self.table} WHERE id = %s",
             args = [id], 
         )
+
+    def update_by_id(self,
+                     id: Any,
+                     **key_value):
+        assert key_value 
+        
+        self.cursor.execute(
+            query = f"UPDATE {self.table} SET {', '.join(f'{key} = %s' for key in key_value.keys())} WHERE id = %s",
+            args = list(key_value.values()) + [id], 
+        )
