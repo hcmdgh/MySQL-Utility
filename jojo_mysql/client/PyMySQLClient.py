@@ -28,7 +28,7 @@ class PyMySQLClient:
         
         self.cursor = self.conn.cursor()
         
-    def close_connection(self):
+    def close(self):
         self.conn.close()
     
     def get_table(self,
