@@ -1,14 +1,15 @@
-from .table import * 
+from ..table import * 
 
 import pymysql
 import pymysql.cursors
 
 __all__ = [
     'MySQLClient', 
+    'PyMySQLClient', 
 ]
 
 
-class MySQLClient:
+class PyMySQLClient:
     def __init__(self,
                  *, 
                  host: str,
@@ -32,10 +33,13 @@ class MySQLClient:
     
     def get_table(self,
                   database: str,
-                  table: str) -> MySQLTable:
-        return MySQLTable(
+                  table: str) -> PyMySQLTable:
+        return PyMySQLTable(
             conn = self.conn, 
             cursor = self.cursor, 
             database = database, 
             table = table, 
         ) 
+
+
+MySQLClient = PyMySQLClient 
