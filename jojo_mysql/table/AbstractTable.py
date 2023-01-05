@@ -39,6 +39,15 @@ class AbstractTable:
             sql_type = SELECT, 
             params = [x], 
         )
+        
+    def query_X_in_x(self,
+                     X: str,
+                     x: Any) -> list[dict[str, Any]]:
+        return self.execute_sql(
+            sql = f"SELECT * FROM {self.table} WHERE {X} IN %s", 
+            sql_type = SELECT, 
+            params = [list(x)], 
+        )
     
     def query_X_eq_x_and_Y_eq_y(self,
                                 X: str,
@@ -49,6 +58,17 @@ class AbstractTable:
             sql = f"SELECT * FROM {self.table} WHERE {X} = %s AND {Y} = %s", 
             sql_type = SELECT, 
             params = [x, y], 
+        )
+        
+    def query_X_in_x_and_Y_in_y(self,
+                                X: str,
+                                x: Any,
+                                Y: str, 
+                                y: Any) -> list[dict[str, Any]]:
+        return self.execute_sql(
+            sql = f"SELECT * FROM {self.table} WHERE {X} IN %s AND {Y} IN %s", 
+            sql_type = SELECT, 
+            params = [list(x), list(y)], 
         )
 
     def query_by_id(self,
