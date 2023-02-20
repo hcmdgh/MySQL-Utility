@@ -16,6 +16,18 @@ class AbstractTable:
                     sql_type: int, 
                     params: Optional[list[Any]] = None) -> list[dict[str, Any]]:
         raise NotImplementedError
+    
+    def count(self) -> int:
+        result = self.execute_sql(
+            sql = f"SELECT COUNT(*) FROM {self.table}", 
+            sql_type = SELECT, 
+        )
+        
+        assert len(result) == 1 and len(result[0]) == 1 
+        cnt = list(result[0].values())[0]
+        assert isinstance(cnt, int)
+        
+        return cnt 
         
     def truncate_table(self):
         self.execute_sql(
@@ -103,4 +115,10 @@ class AbstractTable:
             sql = f"UPDATE {self.table} SET {', '.join(f'{key} = %s' for key in key_value.keys())} WHERE id = %s",
             sql_type = UPDATE, 
             params = list(key_value.values()) + [id], 
+        )
+
+    def drop_table(self):
+        self.execute_sql(
+            sql = f"DROP TABLE IF EXISTS {self.table}", 
+            sql_type = DROP, 
         )
