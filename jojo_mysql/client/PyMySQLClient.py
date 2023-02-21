@@ -2,6 +2,7 @@ from ..table import *
 
 import pymysql
 import pymysql.cursors
+from typing import Optional 
 
 __all__ = [
     'MySQLClient', 
@@ -32,8 +33,14 @@ class PyMySQLClient:
         self.conn.close()
     
     def get_table(self,
-                  database: str,
-                  table: str) -> PyMySQLTable:
+                  table_1: str,
+                  table_2: Optional[str] = None) -> PyMySQLTable:
+        if not table_2:
+            database, _, table = table_1.partition('.')
+        else:
+            database, table = table_1, table_2
+        assert database and table 
+                  
         return PyMySQLTable(
             conn = self.conn, 
             cursor = self.cursor, 
