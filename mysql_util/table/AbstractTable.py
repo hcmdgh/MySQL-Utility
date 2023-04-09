@@ -1,6 +1,6 @@
-from ..constant import * 
-
 from typing import Any, Optional, Iterator
+
+from ..constant import * 
 
 __all__ = [
     'AbstractTable', 
@@ -13,7 +13,7 @@ class AbstractTable:
     
     def execute_sql(self,
                     sql: str,
-                    sql_type: int, 
+                    sql_type: str, 
                     params: Optional[list[Any]] = None) -> list[dict[str, Any]]:
         raise NotImplementedError
     
@@ -28,6 +28,35 @@ class AbstractTable:
         assert isinstance(cnt, int)
         
         return cnt 
+    
+    def create_table(self,
+                     field_dict: dict[str, str], 
+                     drop_first: bool = False):
+        if drop_first:
+            self.drop_table() 
+            
+        field_sql_list = [] 
+        
+        for field_name, field_type in field_dict.items():
+            if field_type == BIGINT_PRIMARY_KEY:
+                field_sql_list.append(f"{field_name} BIGINT AUTO_INCREMENT PRIMARY KEY") 
+            elif field_type == BIGINT:
+                field_sql_list.append(f"{field_name} BIGINT") 
+            elif field_type == INT:
+                field_sql_list.append(f"{field_name} INT")
+            elif field_type == TEXT:
+                field_sql_list.append(f"{field_name} TEXT") 
+            elif field_type == INT_0:
+                field_sql_list.append(f"{field_name} INT DEFAULT 0") 
+            else:
+                raise TypeError 
+            
+        sql = f"CREATE TABLE {self.table} ( {','.join(field_sql_list)} )" 
+            
+        self.execute_sql(
+            sql = sql, 
+            sql_type = CREATE,
+        )
         
     def truncate_table(self):
         self.execute_sql(
