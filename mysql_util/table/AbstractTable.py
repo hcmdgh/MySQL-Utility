@@ -40,12 +40,18 @@ class AbstractTable:
         for field_name, field_type in field_dict.items():
             if field_type == BIGINT_PRIMARY_KEY:
                 field_sql_list.append(f"{field_name} BIGINT AUTO_INCREMENT PRIMARY KEY") 
+            elif field_type == VARCHAR_PRIMARY_KEY:
+                field_sql_list.append(f"{field_name} VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_bin' PRIMARY KEY") 
+            elif field_type == VARCHAR:
+                field_sql_list.append(f"{field_name} VARCHAR(255)") 
             elif field_type == BIGINT:
                 field_sql_list.append(f"{field_name} BIGINT") 
             elif field_type == INT:
                 field_sql_list.append(f"{field_name} INT")
             elif field_type == TEXT:
-                field_sql_list.append(f"{field_name} TEXT") 
+                field_sql_list.append(f"{field_name} TEXT")
+            elif field_type == LONGTEXT:
+                field_sql_list.append(f"{field_name} LONGTEXT") 
             elif field_type == INT_0:
                 field_sql_list.append(f"{field_name} INT DEFAULT 0") 
             else:
