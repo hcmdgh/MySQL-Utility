@@ -20,7 +20,7 @@ class PyMySQLTable(AbstractTable):
         
         self.conn = conn 
         self.cursor = cursor 
-        self.table = f"{database}.{table}"
+        self.table = f"`{database}`.`{table}`"
 
     def execute_sql(self,
                     sql: str,
@@ -38,25 +38,26 @@ class PyMySQLTable(AbstractTable):
             return []
         
     def scan_table(self,
-                   batch_size: int = 5000) -> Iterator[dict[str, Any]]:
+                   batch_size: int = 5000,
+                   pk_name: str = 'id') -> Iterator[dict[str, Any]]:
         last_id = None 
             
         while True:
             if last_id is None:
                 self.cursor.execute(
-                    query = f"SELECT * FROM {self.table} ORDER BY id ASC LIMIT %s",
+                    query = f"SELECT * FROM {self.table} ORDER BY {pk_name} ASC LIMIT %s",
                     args = [batch_size],
                 )
             else:
                 self.cursor.execute(
-                    query = f"SELECT * FROM {self.table} WHERE id > %s ORDER BY id ASC LIMIT %s",
+                    query = f"SELECT * FROM {self.table} WHERE {pk_name} > %s ORDER BY {pk_name} ASC LIMIT %s",
                     args = [last_id, batch_size],
                 )
             
             last_id = None 
             
             for entry in self.cursor.fetchall():
-                last_id = entry['id']
+                last_id = entry[pk_name]
                 yield entry 
 
             if last_id is None:
